@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERSUS BLACK - Solicitud por Pasos</title>
+<style>
+body{margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,BlinkMacSystemFont,Roboto,sans-serif;padding:12px}
+.card{max-width:500px;margin:auto;background:#121212;border:1px solid #14d9c022;border-radius:20px;padding:18px;position:relative;z-index:2}
+h1{margin:0;font-size:22px;letter-spacing:2px}
+.sub{color:#14d9c0;font-size:11px;font-weight:700;margin-bottom:10px}
+
+.trust-badges{display:flex;gap:6px;margin-bottom:15px;flex-wrap:wrap}
+.badge{background:#080808;border:1px solid #14d9c033;padding:5px 10px;border-radius:8px;font-size:10px;color:#14d9c0;font-weight:700}
+
+.steps{display:flex;gap:6px;margin:15px 0}
+.step{flex:1;height:6px;background:#222;border-radius:99px;transition:.3s}
+.step.active{background:#14d9c0}
+.step.done{background:#0fa3a0}
+label{display:block;margin-top:14px;margin-bottom:5px;font-size:11px;color:#888;font-weight:800;text-transform:uppercase}
+input,select{width:100%;padding:13px;border-radius:12px;border:1px solid #222;background:#080808;color:#fff;font-size:15px;outline:none;box-sizing:border-box;transition:all .25s ease}
+input:focus,select:focus{border-color:#14d9c0;box-shadow:0 0 8px #14d9c044}
+
+input.error,select.error{border-color:#ff3b3b;background:#1a0a0a;box-shadow:0 0 0 2px #ff3b3b22}
+input.success,select.success{border-color:#14d9c0;background:#0a1a16;box-shadow:0 0 10px #14d9c066}
+
+.error-msg{color:#ff6b6b;font-size:11px;margin-top:4px;display:none;font-weight:600}
+.error-msg.show{display:block}
+.helper-link{font-size:11px;color:#14d9c0;text-decoration:none;margin-top:4px;display:inline-block}
+.helper-link:hover{text-decoration:underline}
+.warning-box{background:#1a1400;border:1px solid #e0a80055;color:#ffda6a;padding:10px;border-radius:10px;font-size:12px;margin-top:10px;display:none;line-height:1.4}
+.warning-box.show{display:block}
+.row{display:flex;gap:8px}
+.row>div{flex:1}
+.calc{margin-top:15px;background:#000;border:1px solid #14d9c033;padding:12px;border-radius:12px;font-size:13px;line-height:1.4}
+.btn{width:100%;padding:14px;border:0;border-radius:99px;font-weight:900;font-size:15px;margin-top:15px;cursor:pointer;transition:.2s}
+.btnNext{background:linear-gradient(90deg,#0fa3a0,#14d9c0);color:#000}
+.btnBack{background:#222;color:#fff;margin-top:8px}
+.btnSend{background:linear-gradient(90deg,#25D366,#128C7E);color:#fff;font-size:16px}
+.btn:active{transform:scale(0.98)}
+.paso{display:none}
+.paso.active{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.review{background:#080808;border:1px solid #14d9c022;border-radius:14px;padding:14px;font-size:14px;line-height:1.7}
+.review b{color:#14d9c0}
+.tituloReview{text-align:center;font-size:15px;font-weight:900;margin-bottom:12px}
+.chk-container{display:flex;align-items:center;gap:10px;margin-top:16px;cursor:pointer}
+.chk-container input{width:auto;cursor:pointer}
+.privacy-text{font-size:10px;color:#666;margin-top:12px;text-align:center;line-height:1.4}
+.refBox{background:#080808;border:1px solid #14d9c033;padding:12px;border-radius:14px;margin-top:12px}
+.refBox h4{margin:0 0 8px 0;color:#14d9c0;font-size:13px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>VERSUS</h1>
+  <div class="sub">BLACK EDITION • MAZATLÁN</div>
+  
+  <div class="trust-badges">
+    <div class="badge">⚡ Respuesta en &lt; 15 min</div>
+    <div class="badge">🔒 Verificación Segura</div>
+    <div class="badge">🇲🇽 Exclusivo Mazatlán</div>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="s1"></div>
+    <div class="step" id="s2"></div>
+    <div class="step" id="s3"></div>
+    <div class="step" id="s4"></div>
+    <div class="step" id="s5"></div>
+  </div>
+
+  <!-- PASO 1 -->
+  <div class="paso active" id="paso1">
+    <h3>📋 DATOS PERSONALES</h3>
+    <label>Nombre completo *</label>
+    <input id="nom" autocomplete="name" placeholder="Juan Pérez">
+    <div class="error-msg" id="err-nom">⚠️ Escribe tu nombre completo</div>
+    
+    <div class="row">
+      <div>
+        <label>WhatsApp *</label>
+        <input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="6691234567">
+        <div class="error-msg" id="err-tel">⚠️ Escribe tu número</div>
+      </div>
+      <div>
+        <label>Edad *</label>
+        <input id="edad" type="number" inputmode="numeric" placeholder="28">
+        <div class="error-msg" id="err-edad">⚠️ Edad válida (18+)</div>
+      </div>
+    </div>
+    
+    <label>🪪 CURP (18 caracteres) *</label>
+    <input id="curp" placeholder="Ej: GUTG000101HSLTRL01" maxlength="18" style="text-transform:uppercase">
+    <div class="error-msg" id="err-curp">⚠️ La CURP debe tener 18 caracteres</div>
+    <a href="https://www.gob.mx/curp/" target="_blank" class="helper-link">¿No recuerdas tu CURP? Consúltala aquí ↗</a>
+    
+    <label>Domicilio (colonia y calle) *</label>
+    <input id="dir" autocomplete="street-address" placeholder="Col. Centro...">
+    <div class="error-msg" id="err-dir">⚠️ Escribe tu domicilio</div>
+    
+    <div class="row">
+      <div>
+        <label>Código Postal *</label>
+        <input id="cp" type="number" inputmode="numeric" autocomplete="postal-code" placeholder="82000">
+        <div class="error-msg" id="err-cp">⚠️ CP de 5 dígitos</div>
+      </div>
+      <div>
+        <label>Nivel Educativo *</label>
+        <select id="edu">
+          <option value="">Selecciona</option>
+          <option>Primaria</option>
+          <option>Secundaria</option>
+          <option>Bachillerato</option>
+          <option>Universidad</option>
+        </select>
+        <div class="error-msg" id="err-edu">⚠️ Selecciona nivel</div>
+      </div>
+    </div>
+    <button class="btn btnNext" onclick="nextPaso(1)">Siguiente →</button>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="paso" id="paso2">
+    <h3>💳 DATOS FINANCIEROS</h3>
+    <div class="row">
+      <div>
+        <label>Gana al mes *</label>
+        <input id="ing" type="text" inputmode="numeric" placeholder="$12,000">
+        <div class="error-msg" id="err-ing">⚠️ ¿Cuánto ganas?</div>
+      </div>
+      <div>
+        <label>Gasta al mes *</label>
+        <input id="gas" type="text" inputmode="numeric" placeholder="$8,000">
+        <div class="error-msg" id="err-gas">⚠️ ¿Cuánto gastas?</div>
+      </div>
+    </div>
+    <div id="warn-gastos" class="warning-box">
+      ⚠️ Tus gastos son iguales o mayores a tus ingresos. Esto podría afectar la aprobación de tu crédito.
+    </div>
+    
+    <label>¿Cada cuándo te pagan? *</label>
+    <select id="frec">
+      <option value="">Selecciona</option>
+      <option>Semanal</option>
+      <option>Catorcenal</option>
+      <option>Quincenal</option>
+      <option>Mensual</option>
+    </select>
+    <div class="error-msg" id="err-frec">⚠️ Selecciona frecuencia</div>
+    
+    <label>Motivo del préstamo *</label>
+    <select id="motivo">
+      <option value="">Selecciona</option>
+      <option>Emergencia familiar</option>
+      <option>Negocio</option>
+      <option>Salud</option>
+      <option>Educación</option>
+      <option>Deudas</option>
+      <option>Renta</option>
+      <option>Otro</option>
+    </select>
+    <div class="error-msg" id="err-motivo">⚠️ Selecciona motivo</div>
+    <input id="motivoOtro" placeholder="Especifica el motivo" style="display:none;margin-top:6px">
+    <div class="error-msg" id="err-motivoOtro">⚠️ Especifica tu motivo</div>
+    
+    <button class="btn btnNext" onclick="nextPaso(2)">Siguiente →</button>
+    <button class="btn btnBack" onclick="prevPaso(2)">← Atrás</button>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="paso" id="paso3">
+    <h3>💵 MONTO A SOLICITAR</h3>
+    <div class="row">
+      <div>
+        <label>Monto *</label>
+        <input id="monto" type="text" inputmode="numeric" placeholder="Ej: $1,000">
+        <div class="error-msg" id="err-monto">⚠️ Monto mínimo $100</div>
+      </div>
+      <div>
+        <label>Plazo *</label>
+        <select id="plazo">
+          <option value="3">3 sem (20%)</option>
+          <option value="6">6 sem (35%)</option>
+          <option value="12">12 sem (50%)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div id="calc" class="calc">Escribe el monto para ver el total</div>
+    
+    <label class="chk-container">
+      <input type="checkbox" id="check"> 
+      <span>Acepto la verificación de mis datos</span>
+    </label>
+    <div class="error-msg" id="err-check">⚠️ Debes aceptar la verificación</div>
+
+    <div class="privacy-text">
+      🔒 Tus datos están seguros y protegidos conforme a nuestro aviso de privacidad de ley.
+    </div>
+    
+    <button class="btn btnNext" onclick="nextPaso(3)">Revisar datos →</button>
+    <button class="btn btnBack" onclick="prevPaso(3)">← Atrás</button>
+  </div>
+
+  <!-- PASO 4 -->
+  <div class="paso" id="paso4">
+    <h3>👥 REFERENCIAS PERSONALES</h3>
+    
+    <div class="refBox">
+      <h4>📌 Referencia 1 *</h4>
+      <label>Nombre completo *</label><input id="ref1Nom" placeholder="Nombre de la referencia"><div class="error-msg" id="err-ref1Nom">⚠️ Escribe el nombre</div>
+      <label>WhatsApp *</label><input id="ref1Tel" type="tel" inputmode="tel" placeholder="6691234567"><div class="error-msg" id="err-ref1Tel">⚠️ Escribe el teléfono</div>
+      <label>Parentesco *</label>
+      <select id="ref1Par">
+        <option value="">Selecciona</option><option>Madre</option><option>Padre</option><option>Hermano/a</option><option>Esposo/a</option><option>Hijo/a</option><option>Abuelo/a</option><option>Tío/a</option><option>Primo/a</option><option>Suegro/a</option><option>Cuñado/a</option><option>Amigo/a</option><option>Compañero/a de trabajo</option><option>Vecino/a</option><option>Novio/a</option><option>Otro familiar</option>
+      </select>
+      <div class="error-msg" id="err-ref1Par">⚠️ Selecciona parentesco</div>
+    </div>
+
+    <div class="refBox">
+      <h4>📌 Referencia 2 *</h4>
+      <label>Nombre completo *</label><input id="ref2Nom" placeholder="Nombre de la referencia"><div class="error-msg" id="err-ref2Nom">⚠️ Escribe el nombre</div>
+      <label>WhatsApp *</label><input id="ref2Tel" type="tel" inputmode="tel" placeholder="6691234567"><div class="error-msg" id="err-ref2Tel">⚠️ Escribe el teléfono</div>
+      <label>Parentesco *</label>
+      <select id="ref2Par">
+        <option value="">Selecciona</option><option>Madre</option><option>Padre</option><option>Hermano/a</option><option>Esposo/a</option><option>Hijo/a</option><option>Abuelo/a</option><option>Tío/a</option><option>Primo/a</option><option>Suegro/a</option><option>Cuñado/a</option><option>Amigo/a</option><option>Compañero/a de trabajo</option><option>Vecino/a</option><option>Novio/a</option><option>Otro familiar</option>
+      </select>
+      <div class="error-msg" id="err-ref2Par">⚠️ Selecciona parentesco</div>
+    </div>
+
+    <button class="btn btnNext" onclick="nextPaso(4)">Revisar datos →</button>
+    <button class="btn btnBack" onclick="prevPaso(4)">← Atrás</button>
+  </div>
+
+  <!-- PASO 5 -->
+  <div class="paso" id="paso5">
+    <div class="tituloReview">🔍 REVISE QUE TODOS SUS DATOS SEAN CORRECTOS</div>
+    <div id="resumen" class="review"></div>
+    <button class="btn btnSend" id="btnWhatsApp" onclick="enviar()">ENVIAR A VERIFICAR VÍA WHATSAPP 📲</button>
+    <button class="btn btnBack" onclick="prevPaso(5)">← Corregir datos</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function showError(idInput, idErr) {
+  $(idInput).classList.remove('success');
+  $(idInput).classList.add('error');
+  if(idErr && $(idErr)) $(idErr).classList.add('show');
+}
+
+function setSuccess(idInput, idErr) {
+  $(idInput).classList.remove('error');
+  $(idInput).classList.add('success');
+  if(idErr && $(idErr)) $(idErr).classList.remove('show');
+}
+
+function clearState(idInput, idErr) {
+  $(idInput).classList.remove('error', 'success');
+  if(idErr && $(idErr)) $(idErr).classList.remove('show');
+}
+
+const formFields = ['nom','tel','edad','curp','dir','cp','edu','ing','gas','frec','motivo','motivoOtro','monto','plazo','ref1Nom','ref1Tel','ref1Par','ref2Nom','ref2Tel','ref2Par'];
+
+function saveToLocalStorage() {
+  formFields.forEach(id => {
+    if($(id)) localStorage.setItem('v_black_' + id, $(id).value);
+  });
+  if($('check')) localStorage.setItem('v_black_check', $('check').checked);
+}
+
+function loadFromLocalStorage() {
+  formFields.forEach(id => {
+    let saved = localStorage.getItem('v_black_' + id);
+    if (saved !== null && saved !== "" && $(id)) {
+      $(id).value = saved;
+      validateFieldLive(id);
+      if (id === 'motivo' && saved === 'Otro') {
+        $('motivoOtro').style.display = 'block';
+      }
+    }
+  });
+  let chkSaved = localStorage.getItem('v_black_check');
+  if (chkSaved === 'true' && $('check')) {
+    $('check').checked = true;
+  }
+  calcT();
+}
+
+function validateFieldLive(id) {
+  if (!$(id)) return;
+  let val = $(id).value.trim();
+  if (!val) {
+    clearState(id, 'err-' + id);
+    return;
+  }
+  setSuccess(id, 'err-' + id);
+}
+
+function formatMoneyInput(e) {
+  let id = e.target.id;
+  let val = e.target.value.replace(/\D/g, "");
+  if (val !== "") {
+    e.target.value = "$" + Number(val).toLocaleString("en-US");
+  } else {
+    e.target.value = "";
+  }
+  checkGastosVsIngresos();
+  validateFieldLive(id);
+}
+
+function getNumericVal(id) {
+  if (!$(id)) return 0;
+  let val = $(id).value.replace(/[^0-9]/g, "");
+  return val ? parseFloat(val) : 0;
+}
+
+function checkGastosVsIngresos() {
+  let ing = getNumericVal('ing');
+  let gas = getNumericVal('gas');
+  if (ing > 0 && gas > 0 && gas >= ing) {
+    $('warn-gastos').classList.add('show');
+  } else {
+    $('warn-gastos').classList.remove('show');
+  }
+}
+
+if($('ing')) $('ing').addEventListener('input', (e) => { formatMoneyInput(e); saveToLocalStorage(); });
+if($('gas')) $('gas').addEventListener('input', (e) => { formatMoneyInput(e); saveToLocalStorage(); });
+
+if($('monto')) $('monto').addEventListener('input', (e) => {
+  formatMoneyInput(e);
+  calcT();
+  saveToLocalStorage();
+});
+
+function calcT() {
+  let m = getNumericVal('monto');
+  let p = parseInt($('plazo').value);
+  let t = p === 3 ? 0.2 : p === 6 ? 0.35 : 0.5;
+  let tot = m * (1 + t);
+  let pagoSem = tot / p;
+
+  if (m > 0) {
+    $('calc').innerHTML = `Total a pagar: <b style="color:#14d9c0">$${Math.round(tot).toLocaleString()}</b><br>` +
+    `Pagos de: <b style="color:#14d9c0">$${Math.round(pagoSem).toLocaleString()}</b> durante ${p} semanas`;
+  } else {
+    $('calc').innerHTML = 'Escribe el monto para ver el total';
+  }
+}
+
+if($('plazo')) $('plazo').addEventListener('change', () => { calcT(); saveToLocalStorage(); });
+if($('motivo')) $('motivo').addEventListener('change', () => {
+  let val = $('motivo').value;
+  $('motivoOtro').style.display = val === 'Otro' ? 'block' : 'none';
+  if (val) setSuccess('motivo', 'err-motivo');
+  else clearState('motivo', 'err-motivo');
+  saveToLocalStorage();
+});
+
+if($('curp')) $('curp').addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
+  validateFieldLive('curp');
+  saveToLocalStorage();
+});
+
+if($('check')) {
+  $('check').addEventListener('change', () => { 
+    if ($('check').checked) clearState('check', 'err-check');
+    saveToLocalStorage();
+  });
+}
+
+formFields.forEach(id => {
+  if($(id)) {
+    $(id).addEventListener('input', () => {
+      validateFieldLive(id);
+      saveToLocalStorage();
+    });
+    $(id).addEventListener('change', () => {
+      if($(id).value) setSuccess(id, 'err-' + id);
+      saveToLocalStorage();
+    });
+  }
+});
+
+function nextPaso(n) {
+  let ok = true;
+  
+  if (n === 1) {
+    if (!$('nom').value.trim()) { showError('nom', 'err-nom'); ok = false; } else { setSuccess('nom', 'err-nom'); }
+    if (!$('tel').value.trim()) { showError('tel', 'err-tel'); ok = false; } else { setSuccess('tel', 'err-tel'); }
+    if (!$('edad').value) { showError('edad', 'err-edad'); ok = false; } else { setSuccess('edad', 'err-edad'); }
+    if (!$('curp').value.trim()) { showError('curp', 'err-curp'); ok = false; } else { setSuccess('curp', 'err-curp'); }
+    if (!$('dir').value.trim()) { showError('dir', 'err-dir'); ok = false; } else { setSuccess('dir', 'err-dir'); }
+    if (!$('cp').value.trim()) { showError('cp', 'err-cp'); ok = false; } else { setSuccess('cp', 'err-cp'); }
+    if (!$('edu').value) { showError('edu', 'err-edu'); ok = false; } else { setSuccess('edu', 'err-edu'); }
+    if (!ok) return;
+  }
+  
+  if (n === 2) {
+    if (!getNumericVal('ing')) { showError('ing', 'err-ing'); ok = false; } else { setSuccess('ing', 'err-ing'); }
+    if (!getNumericVal('gas')) { showError('gas', 'err-gas'); ok = false; } else { setSuccess('gas', 'err-gas'); }
+    if (!$('frec').value) { showError('frec', 'err-frec'); ok = false; } else { setSuccess('frec', 'err-frec'); }
+    if (!$('motivo').value) { showError('motivo', 'err-motivo'); ok = false; } else { setSuccess('motivo', 'err-motivo'); }
+    if ($('motivo').value === 'Otro' && !$('motivoOtro').value.trim()) { showError('motivoOtro', 'err-motivoOtro'); ok = false; } 
+    else if ($('motivo').value === 'Otro') { setSuccess('motivoOtro', 'err-motivoOtro'); }
+    if (!ok) return;
+  }
+  
+  if (n === 3) {
+    if (getNumericVal('monto') < 100) { showError('monto', 'err-monto'); ok = false; } else { setSuccess('monto', 'err-monto'); }
+    if (!$('check').checked) { showError('check', 'err-check'); ok = false; }
+    if (!ok) return;
+  }
+
+  if (n === 4) {
+    if (!$('ref1Nom').value.trim()) { showError('ref1Nom', 'err-ref1Nom'); ok = false; } else { setSuccess('ref1Nom', 'err-ref1Nom'); }
+    if (!$('ref1Tel').value.trim()) { showError('ref1Tel', 'err-ref1Tel'); ok = false; } else { setSuccess('ref1Tel', 'err-ref1Tel'); }
+    if (!$('ref1Par').value) { showError('ref1Par', 'err-ref1Par'); ok = false; } else { setSuccess('ref1Par', 'err-ref1Par'); }
+
+    if (!$('ref2Nom').value.trim()) { showError('ref2Nom', 'err-ref2Nom'); ok = false; } else { setSuccess('ref2Nom', 'err-ref2Nom'); }
+    if (!$('ref2Tel').value.trim()) { showError('ref2Tel', 'err-ref2Tel'); ok = false; } else { setSuccess('ref2Tel', 'err-ref2Tel'); }
+    if (!$('ref2Par').value) { showError('ref2Par', 'err-ref2Par'); ok = false; } else { setSuccess('ref2Par', 'err-ref2Par'); }
+
+    if (!ok) return;
+    generarResumen();
+  }
+
+  $('paso' + n).classList.remove('active');
+  $('paso' + (n + 1)).classList.add('active');
+  $('s' + n).classList.add('done');
+  $('s' + (n + 1)).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function prevPaso(n) {
+  $('paso' + n).classList.remove('active');
+  $('paso' + (n - 1)).classList.add('active');
+  $('s' + n).classList.remove('active');
+  window.scrollTo(0, 0);
+}
+
+function generarResumen() {
+  let motF = $('motivo').value === 'Otro' ? $('motivoOtro').value : $('motivo').value;
+  let m = getNumericVal('monto');
+  let p = parseInt($('plazo').value);
+  let t = p === 3 ? 0.2 : p === 6 ? 0.35 : 0.5;
+  let tot = Math.round(m * (1 + t));
+  let cuota = Math.round(tot / p);
+
+  $('resumen').innerHTML = 
+    `👤 <b>Nombre:</b> ${$('nom').value}<br>` +
+    `📱 <b>WhatsApp:</b> ${$('tel').value}<br>` +
+    `🎂 <b>Edad:</b> ${$('edad').value} años<br>` +
+    `🪪 <b>CURP:</b> ${$('curp').value.toUpperCase()}<br>` +
+    `📍 <b>Dirección:</b> ${$('dir').value}<br>` +
+    `📮 <b>CP:</b> ${$('cp').value}<br>` +
+    `🎓 <b>Educación:</b> ${$('edu').value}<br>` +
+    `💡 <b>Motivo:</b> ${motF}<br>` +
+    `📈 <b>Ingresos:</b> $${getNumericVal('ing').toLocaleString()}<br>` +
+    `📉 <b>Gastos:</b> $${getNumericVal('gas').toLocaleString()}<br>` +
+    `💳 <b>Pago:</b> ${$('frec').value}<br><hr style="border-color:#222">` +
+    `👥 <b>Ref. 1:</b> ${$('ref1Nom').value} (${$('ref1Par').value} - Tel: ${$('ref1Tel').value})<br>` +
+    `👥 <b>Ref. 2:</b> ${$('ref2Nom').value} (${$('ref2Par').value} - Tel: ${$('ref2Tel').value})<br><hr style="border-color:#222">` +
+    `💵 <b>Monto Solicitado:</b> $${m.toLocaleString()}<br>` +
+    `⏳ <b>Plazo:</b> ${p} semanas (${t * 100}% interés)<br>` +
+    `📅 <b>Pago Semanal:</b> $${cuota.toLocaleString()}<br>` +
+    `💰 <b>Total a Pagar:</b> $${tot.toLocaleString()}`;
+}
+
+function enviar() {
+  let nom = $('nom').value,
+      tel = $('tel').value,
+      edad = $('edad').value,
+      curp = $('curp').value.toUpperCase(),
+      dir = $('dir').value,
+      cp = $('cp').value,
+      edu = $('edu').value,
+      mot = $('motivo').value,
+      mot2 = $('motivoOtro').value,
+      frec = $('frec').value,
+      ing = getNumericVal('ing'),
+      gas = getNumericVal('gas'),
+      m = getNumericVal('monto'),
+      p = parseInt($('plazo').value),
+      r1Nom = $('ref1Nom').value,
+      r1Tel = $('ref1Tel').value,
+      r1Par = $('ref1Par').value,
+      r2Nom = $('ref2Nom').value,
+      r2Tel = $('ref2Tel').value,
+      r2Par = $('ref2Par').value;
+
+  let t = p === 3 ? 0.2 : p === 6 ? 0.35 : 0.5;
+  let tot = Math.round(m * (1 + t));
+  let cuota = Math.round(tot / p);
+  let motF = mot === 'Otro' ? mot2 : mot;
+
+  let msg = `*🔥 SOLICITUD VERSUS BLACK 🔥*\n\n` +
+            `👤 *Nombre Completo:* ${nom}\n` +
+            `📱 *WhatsApp:* ${tel}\n` +
+            `🎂 *Edad:* ${edad} años\n` +
+            `🪪 *CURP:* ${curp}\n` +
+            `📍 *Dirección:* ${dir}\n` +
+            `📮 *CP:* ${cp}\n` +
+            `🎓 *Nivel Educativo:* ${edu}\n` +
+            `💡 *Motivo:* ${motF}\n` +
+            `-----------------------------\n` +
+            `👥 *Referencias Personales:*\n` +
+            `• 1: ${r1Nom} (${r1Par}) - ${r1Tel}\n` +
+            `• 2: ${r2Nom} (${r2Par}) - ${r2Tel}\n` +
+            `-----------------------------\n` +
+            `💵 *Monto Solicitado:* $${m.toLocaleString()}\n` +
+            `⏳ *Plazo:* ${p} semanas (${t * 100}% interés)\n` +
+            `📅 *Cuota Semanal:* $${cuota.toLocaleString()}\n` +
+            `💰 *Total a Pagar:* $${tot.toLocaleString()}\n` +
+            `-----------------------------\n` +
+            `📈 *Ingresos Mensuales:* $${ing.toLocaleString()}\n` +
+            `📉 *Gastos Mensuales:* $${gas.toLocaleString()}\n` +
+            `💳 *Frecuencia de Cobro:* ${frec}`;
+
+  let btn = $('btnWhatsApp');
+  btn.innerText = "Abriendo WhatsApp...";
+  btn.style.opacity = "0.7";
+  btn.disabled = true;
+
+  let numero = "526691647571";
+  let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
+
+  setTimeout(() => {
+    window.open(url, "_blank");
+    btn.innerText = "ENVIAR A VERIFICAR VÍA WHATSAPP 📲";
+    btn.style.opacity = "1";
+    btn.disabled = false;
+  }, 600);
+}
+
+window.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+</script>
+</body>
+</html>
